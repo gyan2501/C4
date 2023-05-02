@@ -14,11 +14,19 @@ postRouter.post("/create", async (req, res) => {
   }
 });
 
-
 //GET POST ROUTE
 postRouter.get("/", async (req, res) => {
   try {
-    const post = await PostModel.find({ authorId: req.body.authorId });
+    const filterPost = {};
+    if (req.query.authorId) {
+      filterPost.authorId = req.query.authorId;
+    }
+
+    if (req.query.device) {
+      filterPost.device = req.query.device;
+    }
+
+    const post = await PostModel.find(filterPost);
 
     res.status(200).send(post);
   } catch (error) {
@@ -55,7 +63,6 @@ postRouter.delete("/delete/:id", async (req, res) => {
       await PostModel.findByIdAndDelete(id, req.body, { new: true });
       res.status(200).send({ msg: "Post Deleted successfully!!" });
     }
-    
   } catch (error) {
     res.status(400).send({ err: error.message });
   }
